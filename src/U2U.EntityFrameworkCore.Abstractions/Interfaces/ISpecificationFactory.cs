@@ -8,4 +8,8 @@ namespace U2U.EntityFrameworkCore.Abstractions.Interfaces
   {
     bool ForType(Type t);
   }
+
+  public interface ISpecificationFactory<T> : ISpecificationFactory
+  {
+  }
 }

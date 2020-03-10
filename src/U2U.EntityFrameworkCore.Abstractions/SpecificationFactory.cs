@@ -10,8 +10,8 @@ using U2U.EntityFrameworkCore.Abstractions.Interfaces;
 namespace U2U.EntityFrameworkCore
 {
   public class SpecificationFactory<T>
-    : ISpecificationFactory
-    where T : class// , IEntity
+    : ISpecificationFactory<T>
+    where T : class
   {
     // Flyweights
     private readonly ISpecification<T> none = new Specification<T>(t => false);
