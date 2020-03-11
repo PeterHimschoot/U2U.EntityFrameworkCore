@@ -30,7 +30,7 @@ namespace U2U.EntityFrameworkCore
 
   public static class SpecificationFactoryExtensions
   {
-    public static ISpecification<T> WithId<T>(this SpecificationFactory<T> _, int id)
+    public static ISpecification<T> WithId<T>(this ISpecificationFactory<T> _, int id)
       where T : EntityBase
       => new EntitySpecification<T>(id);
 
