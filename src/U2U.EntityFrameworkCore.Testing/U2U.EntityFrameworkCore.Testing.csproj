@@ -4,12 +4,17 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <NullableContextOptions>enable</NullableContextOptions>
     <LangVersion>8.0</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.3.1</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Divergic.Logging.Xunit" Version="3.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
   </ItemGroup>
   
