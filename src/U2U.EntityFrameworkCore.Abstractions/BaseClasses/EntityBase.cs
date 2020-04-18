@@ -1,5 +1,9 @@
 ﻿#nullable enable
 
+using System.Collections;
+using System.Collections.Generic;
+using U2U.EntityFrameworkCore.Abstractions.Interfaces;
+
 namespace U2U.EntityFrameworkCore.Abstractions
 {
   /// <summary>
@@ -11,5 +15,13 @@ namespace U2U.EntityFrameworkCore.Abstractions
       => Id = id;
 
     public int Id { get; }
+
+    public ICollection<IDomainEvent>? domainEvents;
+
+    protected void RegisterDomainEvent(IDomainEvent @event)
+    {
+      domainEvents ??= new List<IDomainEvent>();
+      domainEvents.Add(@event);
+    }
   }
 }
