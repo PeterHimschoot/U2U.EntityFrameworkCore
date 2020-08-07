@@ -12,24 +12,31 @@ namespace U2U.EntityFrameworkCore
   /// </summary>
   /// <typeparam name="T">The entity class' type.</typeparam>
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-  public class CachedSpecification<T>
+  public class CachedSpecification<T, K>
 #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     : Specification<T>
-    , IEquatable<CachedSpecification<T>>
+    , IEquatable<CachedSpecification<T, K>>
     where T : class
   {
-    public CachedSpecification(Expression<Func<T, bool>> criteria, IEnumerable<Expression<Func<T, object>>> includes, TimeSpan cacheDuration, object? key = null)
+    public CachedSpecification(Expression<Func<T, bool>> criteria, IEnumerable<Expression<Func<T, object>>> includes, TimeSpan cacheDuration, K key)
     : base(criteria, includes)
     {
       CacheDuration = cacheDuration;
-      Key = key ?? this;
+      Key = key;
     }
 
-    public object Key { get; }
+    public CachedSpecification(Expression<Func<T, bool>> criteria, TimeSpan cacheDuration, K key)
+    : base(criteria)
+    {
+      CacheDuration = cacheDuration;
+      Key = key;
+    }
+
+    public K Key { get; }
 
     public TimeSpan CacheDuration { get; set; }
 
-    public bool Equals(CachedSpecification<T> other)
+    public bool Equals(CachedSpecification<T, K> other)
     {
       if (object.ReferenceEquals(this, other))
       {
@@ -39,7 +46,7 @@ namespace U2U.EntityFrameworkCore
       {
         return false;
       }
-      return EqualityComparer<object>.Default.Equals(this.Key, other.Key)
+      return EqualityComparer<K>.Default.Equals(this.Key, other.Key)
         && (this.CacheDuration == other.CacheDuration)
         && base.Equals(other);
     }
@@ -53,10 +60,11 @@ namespace U2U.EntityFrameworkCore
 
       if (this.GetType() == obj?.GetType())
       {
-        CachedSpecification<T> other = (CachedSpecification<T>)obj;
-        return EqualityComparer<object>.Default.Equals(this.Key, other.Key)
-          && (this.CacheDuration == other.CacheDuration)
-          && base.Equals(other);
+        CachedSpecification<T, K> other = (CachedSpecification<T, K>)obj;
+        return this.Equals(other);
+        //EqualityComparer<object>.Default.Equals(this.Key, other.Key)
+        //  && (this.CacheDuration == other.CacheDuration)
+        //  && base.Equals(other);
       }
       return false;
     }

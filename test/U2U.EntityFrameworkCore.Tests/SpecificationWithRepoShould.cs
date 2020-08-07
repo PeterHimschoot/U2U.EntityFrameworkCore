@@ -43,13 +43,13 @@ namespace U2U.EntityFrameworkCore.Tests
           await repo.ListAsync(this.specificationFactories.For<Student>()
                                                      .All()
                                                      .Including(st => st.Login));
-        allStudents.Should().HaveCount(3);
+        _ = allStudents.Should().HaveCount(3);
 
-        allStudents.Select(st => st.Login)
+        _ = allStudents.Select(st => st.Login)
                    .Should().NotBeNull();
-        allStudents.Select(st => st.Sessions)
+        _ = allStudents.Select(st => st.Sessions)
                    .Should().NotBeNull();
-        allStudents.SelectMany(st => st.Sessions)
+        _ = allStudents.SelectMany(st => st.Sessions)
                    .Select(ss => ss.Session)
                    .Select(s => s.Course).Should().NotBeNull();
 
@@ -140,11 +140,10 @@ namespace U2U.EntityFrameworkCore.Tests
       { }
     }
 
-    public class StudentWithIdSpecificationCached : CachedSpecification<Student>
+    public class StudentWithIdSpecificationCached : CachedSpecification<Student, int>
     {
       public StudentWithIdSpecificationCached(int id)
         : base(criteria: student => student.Id == id,
-            includes: null,
             cacheDuration: TimeSpan.FromHours(1),
             key: id)
       { }
@@ -153,7 +152,7 @@ namespace U2U.EntityFrameworkCore.Tests
     public class StudentWithIdAndLoginSpecification : StudentWithIdSpecification
     {
       public StudentWithIdAndLoginSpecification(int id)
-        : base(id) => this.Include(student => student.Login);
+        : base(id) => Include(student => student.Login);
     }
 
     [Fact]
@@ -206,14 +205,15 @@ namespace U2U.EntityFrameworkCore.Tests
         dbContext.Database.EnsureCreated();
         var repo = new StudentRepository(dbContext);
 
-        Student student =
+        Student? student =
           await repo.SingleAsync(new StudentWithIdSpecification(1)
                                  .Including(st => st.Login));
-        student.Login
+        student.Should().NotBeNull();
+        student!.Login
                 .Should().BeNull();
-        student.Sessions
+        student!.Sessions
                    .Should().NotBeNull();
-        student.Sessions
+        student!.Sessions
                .Select(ss => ss.Session)
                .Select(s => s.Course).Should().NotBeNull();
       }

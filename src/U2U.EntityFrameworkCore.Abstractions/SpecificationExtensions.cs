@@ -8,9 +8,9 @@ namespace U2U.EntityFrameworkCore
 {
   public static class SpecificationExtensions
   {
-    public static ISpecification<T> AsCached<T>(this ISpecification<T> spec, TimeSpan duration, object key)
+    public static ISpecification<T> AsCached<T, K>(this ISpecification<T> spec, TimeSpan duration, K key)
       where T : class//, IEntity
-    => new CachedSpecification<T>(spec.Criteria, spec.Includes, duration, key);
+    => new CachedSpecification<T, K>(spec.Criteria, spec.Includes, duration, key);
 
     public static ISpecification<T> Including<T>(this ISpecification<T> spec, Expression<Func<T, object>> include)
       where T : class//, IEntity
