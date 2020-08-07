@@ -6,7 +6,7 @@ namespace U2U.EntityFrameworkCore.Abstractions
   /// Enhances an ISpecification with caching information.
   /// </summary>
   public interface ICachedSpecification<T> : ISpecification<T>
-    where T : class//, IEntity
+    where T : class
   {
     /// <summary>
     /// The key used in cache lookup.

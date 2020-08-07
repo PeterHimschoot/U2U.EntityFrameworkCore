@@ -16,8 +16,7 @@ namespace U2U.EntityFrameworkCore
 #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     : Specification<T>
     , IEquatable<CachedSpecification<T>>
-    , ICachedSpecification<T>
-     where T : class//, IEntity
+    where T : class
   {
     public CachedSpecification(Expression<Func<T, bool>> criteria, IEnumerable<Expression<Func<T, object>>> includes, TimeSpan cacheDuration, object? key = null)
     : base(criteria, includes)
