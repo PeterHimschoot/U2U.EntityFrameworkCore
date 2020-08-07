@@ -42,8 +42,5 @@ namespace U2U.EntityFrameworkCore.Abstractions
     /// <param name="specification">The specification containing the filter and includes.</param>
     /// <returns>The entity matching the specification, or null if none found.</returns>
     ValueTask<T?> SingleAsync(ISpecification<T> specification);
-
-    ValueTask SaveChangesAsync();
-
   }
 }

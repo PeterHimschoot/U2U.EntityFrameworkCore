@@ -41,7 +41,7 @@ namespace U2U.EntityFrameworkCore
       => await this.cache.GetOrCreateAsync<T?>(specification,
         async (spec) => await this.innerRepo.SingleAsync(specification));
 
-    public ValueTask SaveChangesAsync()
-      => innerRepo.SaveChangesAsync();
+    //public ValueTask SaveChangesAsync()
+    //  => innerRepo.SaveChangesAsync();
   }
 }

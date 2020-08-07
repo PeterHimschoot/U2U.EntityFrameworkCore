@@ -45,5 +45,8 @@ namespace U2U.EntityFrameworkCore.Abstractions
     /// </summary>
     /// <param name="entity">Some instance to update.</param>
     ValueTask UpdateAsync(T entity);
+
+    ValueTask SaveChangesAsync();
+
   }
 }

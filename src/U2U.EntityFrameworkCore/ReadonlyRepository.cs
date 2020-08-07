@@ -2,15 +2,11 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using U2U.EntityFrameworkCore.Abstractions;
-using U2U.EntityFrameworkCore.Abstractions.Interfaces;
 
 namespace U2U.EntityFrameworkCore
 {
@@ -50,36 +46,5 @@ namespace U2U.EntityFrameworkCore
 
     protected virtual void Inspect(EntityEntry entry, DateTime timeStamp)
     { }
-
-    private async ValueTask DispatchEvents(EntityBase entity)
-    {
-      IServiceProvider services = (DbContext as IInfrastructure<IServiceProvider>).Instance;
-      if (entity.domainEvents != null)
-      {
-        foreach (var @event in entity.domainEvents)
-        {
-          Type serviceType = typeof(IDomainEventHandler<>).MakeGenericType(@event.GetType());
-          IEnumerable<object> domainEventHandlers = services.GetServices(serviceType: serviceType);
-          foreach( IDomainEventHandler handler in domainEventHandlers)
-          {
-            await handler.Handle(@event);
-          }
-        }
-      }
-    }
-
-    public virtual async ValueTask SaveChangesAsync()
-    {
-      var timestamp = DateTime.Now;
-      foreach (var entry in DbContext.ChangeTracker.Entries())
-      {
-        Inspect(entry, timestamp);
-        if (entry.Entity != null && entry.Entity is EntityBase)
-        {
-          await DispatchEvents((EntityBase)entry.Entity);
-        }
-      }
-      await this.DbContext.SaveChangesAsync();
-    }
   }
 }
