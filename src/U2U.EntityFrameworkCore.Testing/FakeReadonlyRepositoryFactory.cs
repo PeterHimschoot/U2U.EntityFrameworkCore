@@ -14,20 +14,20 @@ namespace U2U.EntityFrameworkCore.Testing
     {
       var repoMock = new Mock<IRepository<T>>();
 
-      repoMock
-        .Setup(m => m.Single(It.IsAny<ISpecification<T>>()))
-          .Returns((ISpecification<T> spec) =>
-            spec.WithFakeData(data).SingleOrDefault(spec.Criteria));
+      //repoMock
+      //  .Setup(m => m.Single(It.IsAny<ISpecification<T>>()))
+      //    .Returns((ISpecification<T> spec) =>
+      //      spec.WithFakeData(data).SingleOrDefault(spec.Criteria));
 
       repoMock
         .Setup(m => m.SingleAsync(It.IsAny<ISpecification<T>>()))
           .ReturnsAsync((ISpecification<T> spec) =>
             spec.WithFakeData(data).SingleOrDefault(spec.Criteria));
 
-      repoMock
-        .Setup(m => m.List(It.IsAny<ISpecification<T>>()))
-          .Returns((ISpecification<T> spec) =>
-            spec.WithFakeData(data).Where(spec.Criteria).AsEnumerable());
+      //repoMock
+      //  .Setup(m => m.List(It.IsAny<ISpecification<T>>()))
+      //    .Returns((ISpecification<T> spec) =>
+      //      spec.WithFakeData(data).Where(spec.Criteria).AsEnumerable());
 
       repoMock.Setup(m => m.ListAsync(It.IsAny<ISpecification<T>>()))
           .ReturnsAsync((ISpecification<T> spec) =>

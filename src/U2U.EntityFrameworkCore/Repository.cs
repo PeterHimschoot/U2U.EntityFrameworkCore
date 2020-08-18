@@ -23,21 +23,6 @@ namespace U2U.EntityFrameworkCore
   {
     public Repository(D dbContext) : base(dbContext) { }
 
-    public virtual void Insert(T entity)
-    {
-      DbContext.Set<T>().Add(entity);
-    }
-
-    public virtual void Update(T entity)
-    {
-      DbContext.Entry(entity).State = EntityState.Modified;
-    }
-
-    public virtual void Delete(T entity)
-    {
-      DbContext.Set<T>().Remove(entity);
-    }
-
     public virtual ValueTask InsertAsync(T entity)
     {
       DbContext.Set<T>().Add(entity);

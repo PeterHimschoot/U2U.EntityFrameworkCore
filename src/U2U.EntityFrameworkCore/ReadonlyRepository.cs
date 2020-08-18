@@ -17,7 +17,7 @@ namespace U2U.EntityFrameworkCore
   /// <typeparam name="D">The DbContext to use.</typeparam>
 
   public class ReadonlyRepository<T, D> : IReadonlyRepository<T>
-    where T : class//, IEntity
+    where T : class
     where D : DbContext
   {
     protected D DbContext { get; }
@@ -29,14 +29,7 @@ namespace U2U.EntityFrameworkCore
       => q;
 
     protected internal IQueryable<T> BuildQueryable(ISpecification<T> specification)
-      => specification
-      .BuildQueryable(Includes(DbContext.Set<T>().AsQueryable()));
-
-    public virtual IEnumerable<T> List(ISpecification<T> specification)
-      => BuildQueryable(specification).AsEnumerable();
-
-    public virtual T? Single(ISpecification<T> specification)
-      => BuildQueryable(specification).SingleOrDefault();
+      => specification.BuildQueryable(Includes(DbContext.Set<T>().AsQueryable()));
 
     public virtual async ValueTask<IEnumerable<T>> ListAsync(ISpecification<T> specification)
       => await BuildQueryable(specification).ToListAsync();

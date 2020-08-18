@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace U2U.EntityFrameworkCore.Abstractions.Interfaces
 {
@@ -11,7 +7,8 @@ namespace U2U.EntityFrameworkCore.Abstractions.Interfaces
     ValueTask Handle(object @event);
   }
 
-  public interface IDomainEventHandler<T> : IDomainEventHandler where T : IDomainEvent
+  public interface IDomainEventHandler<TDomainEvent> : IDomainEventHandler 
+    where TDomainEvent : IDomainEvent
   {
   }
 }

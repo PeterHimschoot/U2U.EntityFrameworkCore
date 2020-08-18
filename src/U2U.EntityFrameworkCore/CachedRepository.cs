@@ -27,11 +27,11 @@ namespace U2U.EntityFrameworkCore
       this.cache = cache;
     }
 
-    public IEnumerable<T> List(ISpecification<T> specification)
-      => this.cache.GetOrCreate(specification, this.innerRepo.List);
+    //public IEnumerable<T> List(ISpecification<T> specification)
+    //  => this.cache.GetOrCreate(specification, this.innerRepo.List);
 
-    public T? Single(ISpecification<T> specification)
-      => this.cache.GetOrCreate(specification, this.innerRepo.Single);
+    //public T? Single(ISpecification<T> specification)
+    //  => this.cache.GetOrCreate(specification, this.innerRepo.Single);
 
     public async ValueTask<IEnumerable<T>> ListAsync(ISpecification<T> specification)
       => await this.cache.GetOrCreateAsync<IEnumerable<T>>(specification,

@@ -1,7 +1,4 @@
-﻿#nullable enable
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -31,8 +28,8 @@ namespace U2U.EntityFrameworkCore
 
     public Specification(Expression<Func<T, bool>> criteria, IEnumerable<Expression<Func<T, object>>> includes)
     {
-      this.Criteria = criteria;
-      this.Includes = includes;
+      Criteria = criteria;
+      Includes = includes;
     }
 
     public Expression<Func<T, bool>> Criteria { get; }
@@ -41,24 +38,26 @@ namespace U2U.EntityFrameworkCore
 
     public bool Test(in T t)
     {
-      compiledCriteria ??= Criteria.Compile();
-      return compiledCriteria.Invoke(t);
+      this.compiledCriteria ??= Criteria.Compile();
+      return this.compiledCriteria.Invoke(t);
     }
 
     public IEnumerable<Expression<Func<T, object>>> Includes { get; }
 
     public ISpecification<T> Include(IEnumerable<Expression<Func<T, object>>> includes)
-    => includes == null ? this : new Specification<T>(Criteria, this.Includes.Union(includes));
+    => includes == null ? this : new Specification<T>(Criteria, Includes.Union(includes));
 
     public ISpecification<T> Include(Expression<Func<T, object>> include)
     {
-      if( include == null)
+      if (include == null)
       {
         return this;
       }
-      var includes = new List<Expression<Func<T, object>>>(this.Includes);
-      includes.Add(include);
-      return this.Include(includes);
+      var includes = new List<Expression<Func<T, object>>>(Includes)
+      {
+        include
+      };
+      return Include(includes);
     }
 
     public IQueryable<T> BuildQueryable(IQueryable<T> q)
@@ -67,27 +66,27 @@ namespace U2U.EntityFrameworkCore
 
     public virtual bool Equals([AllowNull] Specification<T> other)
     {
-      if( object.ReferenceEquals(this, other))
+      if (object.ReferenceEquals(this, other))
       {
         return true;
       }
-      if( other == null)
+      if (other == null)
       {
         return false;
       }
-      return new ExpressionComparison(this.Criteria, other.Criteria).AreEqual;
+      return new ExpressionComparison(Criteria, other.Criteria).AreEqual;
     }
 
     public override bool Equals(object? obj)
     {
-      if( object.ReferenceEquals(this, obj))
+      if (object.ReferenceEquals(this, obj))
       {
         return true;
       }
-      if( this.GetType() == obj?.GetType())
+      if (GetType() == obj?.GetType())
       {
-        Specification<T> spec = (Specification<T>) obj;
-        return new ExpressionComparison(this.Criteria, spec.Criteria).AreEqual;
+        var spec = (Specification<T>)obj;
+        return new ExpressionComparison(Criteria, spec.Criteria).AreEqual;
       }
       return false;
     }
