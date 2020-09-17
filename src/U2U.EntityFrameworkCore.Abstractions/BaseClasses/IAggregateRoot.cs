@@ -7,4 +7,16 @@
   {
 
   }
+
+  public interface IAggregateRoot<T1> : IAggregateRoot
+  {
+
+  }
+
+  // public class ShoppingBasket : IAggregateRoot<Customer, GameInBasket>
+
+  public interface IAggregateRoot<T1, T2>
+  {
+
+  }
 }
