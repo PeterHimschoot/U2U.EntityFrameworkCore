@@ -1,10 +1,9 @@
 ﻿#nullable enable
 
 using Microsoft.EntityFrameworkCore;
-using System;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using U2U.EntityFrameworkCore.Abstractions;
@@ -48,7 +47,7 @@ namespace U2U.EntityFrameworkCore
       IServiceProvider services = (DbContext as IInfrastructure<IServiceProvider>).Instance;
       if (entity.domainEvents != null)
       {
-        foreach (var @event in entity.domainEvents)
+        foreach (IDomainEvent? @event in entity.domainEvents)
         {
           Type serviceType = typeof(IDomainEventHandler<>).MakeGenericType(@event.GetType());
           IEnumerable<object> domainEventHandlers = services.GetServices(serviceType: serviceType);
@@ -63,8 +62,8 @@ namespace U2U.EntityFrameworkCore
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "HAA0401:Possible allocation of reference type enumerator", Justification = "<Pending>")]
     public virtual async ValueTask SaveChangesAsync()
     {
-      var timestamp = DateTime.Now;
-      foreach (var entry in DbContext.ChangeTracker.Entries())
+      DateTime timestamp = DateTime.UtcNow;
+      foreach (Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry? entry in DbContext.ChangeTracker.Entries())
       {
         Inspect(entry, timestamp);
         if (entry.Entity != null && entry.Entity is EntityBase)
@@ -72,7 +71,7 @@ namespace U2U.EntityFrameworkCore
           await DispatchEvents((EntityBase)entry.Entity);
         }
       }
-      await this.DbContext.SaveChangesAsync();
+      await DbContext.SaveChangesAsync();
     }
   }
 }
