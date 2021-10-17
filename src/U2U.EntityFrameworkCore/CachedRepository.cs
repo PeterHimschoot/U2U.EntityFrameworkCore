@@ -1,10 +1,5 @@
 ﻿#nullable enable
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using U2U.EntityFrameworkCore.Abstractions;
 
 namespace U2U.EntityFrameworkCore
 {

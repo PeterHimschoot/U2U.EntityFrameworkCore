@@ -1,72 +1,62 @@
-﻿#nullable enable
+﻿namespace U2U.EntityFrameworkCore;
 
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using U2U.EntityFrameworkCore.Abstractions;
-
-namespace U2U.EntityFrameworkCore
-{
-  /// <summary>
-  /// A Specification with extra caching information.
-  /// </summary>
-  /// <typeparam name="T">The entity class' type.</typeparam>
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-  public class CachedSpecification<T, K>
-#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+/// <summary>
+/// A Specification with extra caching information.
+/// </summary>
+/// <typeparam name="T">The entity class' type.</typeparam>
+public class CachedSpecification<T, K>
     : Specification<T>
-    , IEquatable<CachedSpecification<T, K>>
-    where T : class
+  , IEquatable<CachedSpecification<T, K>>
+  where T : class
+{
+  public CachedSpecification(Expression<Func<T, bool>> criteria, IEnumerable<Expression<Func<T, object>>> includes, TimeSpan cacheDuration, K key)
+  : base(criteria, includes)
   {
-    public CachedSpecification(Expression<Func<T, bool>> criteria, IEnumerable<Expression<Func<T, object>>> includes, TimeSpan cacheDuration, K key)
-    : base(criteria, includes)
+    CacheDuration = cacheDuration;
+    Key = key;
+  }
+
+  public CachedSpecification(Expression<Func<T, bool>> criteria, TimeSpan cacheDuration, K key)
+  : base(criteria)
+  {
+    CacheDuration = cacheDuration;
+    Key = key;
+  }
+
+  public K Key { get; }
+
+  public TimeSpan CacheDuration { get; set; }
+
+  public bool Equals(CachedSpecification<T, K> other)
+  {
+    if (object.ReferenceEquals(this, other))
     {
-      CacheDuration = cacheDuration;
-      Key = key;
+      return true;
     }
-
-    public CachedSpecification(Expression<Func<T, bool>> criteria, TimeSpan cacheDuration, K key)
-    : base(criteria)
+    if (other is null)
     {
-      CacheDuration = cacheDuration;
-      Key = key;
-    }
-
-    public K Key { get; }
-
-    public TimeSpan CacheDuration { get; set; }
-
-    public bool Equals(CachedSpecification<T, K> other)
-    {
-      if (object.ReferenceEquals(this, other))
-      {
-        return true;
-      }
-      if (other == null)
-      {
-        return false;
-      }
-      return EqualityComparer<K>.Default.Equals(this.Key, other.Key)
-        && (this.CacheDuration == other.CacheDuration)
-        && base.Equals(other);
-    }
-
-    public override bool Equals(object? obj)
-    {
-      if (object.ReferenceEquals(this, obj))
-      {
-        return true;
-      }
-
-      if (this.GetType() == obj?.GetType())
-      {
-        CachedSpecification<T, K> other = (CachedSpecification<T, K>)obj;
-        return this.Equals(other);
-        //EqualityComparer<object>.Default.Equals(this.Key, other.Key)
-        //  && (this.CacheDuration == other.CacheDuration)
-        //  && base.Equals(other);
-      }
       return false;
     }
+    return EqualityComparer<K>.Default.Equals(this.Key, other.Key)
+      && (this.CacheDuration == other.CacheDuration)
+      && base.Equals(other);
   }
+
+  public override bool Equals(object? obj)
+  {
+    if (object.ReferenceEquals(this, obj))
+    {
+      return true;
+    }
+    if (this.GetType() == obj?.GetType())
+    {
+      CachedSpecification<T, K> other = (CachedSpecification<T, K>)obj;
+      return this.Equals(other);
+    }
+    return false;
+  }
+
+  public override int GetHashCode() 
+    => HashCode.Combine(this.Criteria, this.CacheDuration, this.Key);
 }
+

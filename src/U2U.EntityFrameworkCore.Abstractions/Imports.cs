@@ -1,0 +1,10 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.ChangeTracking;
+global using System.Collections;
+global using System.Collections.Immutable;
+global using System.Collections.ObjectModel;
+global using System.Diagnostics.CodeAnalysis;
+global using System.Linq.Expressions;
+global using System.Reflection;
+global using U2U.EntityFrameworkCore.Abstractions;
+global using U2U.EntityFrameworkCore.Abstractions.Interfaces;
