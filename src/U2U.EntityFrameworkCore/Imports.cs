@@ -5,3 +5,4 @@ global using U2U.EntityFrameworkCore.Abstractions;
 global using U2U.EntityFrameworkCore.Abstractions.Interfaces;
 global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;

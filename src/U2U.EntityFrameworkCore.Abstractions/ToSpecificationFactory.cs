@@ -116,7 +116,7 @@ public class ToSpecificationFactory
       => inverters[type](value);
   }
 
-  public static T? CreateFromSpecification<T>(Specification<T> specification)
+  public static T? CreateFromSpecification<T>(ISpecification<T> specification)
     where T : class, new()
   {
     var creationCOR = new ChainOfResponsibility<CreateInfo<T>>(t => { });

@@ -2,49 +2,73 @@
 
 public class DbInjectionFixture<TDb> where TDb : DbContext
 {
-  //private readonly IServiceCollection services = new ServiceCollection();
-
   public TransactionScope StartTest()
     => new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(30), TransactionScopeAsyncFlowOption.Enabled);
 
+  private readonly IServiceCollection services = new ServiceCollection();
+  private IServiceProvider? serviceProvider = null;
+
+  public DbInjectionFixture<TDb> ConfigureServices(Action<IServiceCollection> configure)
+  {
+    configure(services);
+    return this;
+  }
+
+  protected virtual void ConfigureServices(IServiceCollection services)
+  {
+  }
+
+  //private void AddDefaultEntityFrameworkDatabases(IServiceCollection services)
+  //{
+  //  services.AddEntityFrameworkInMemoryDatabase();
+  //  services.AddEntityFrameworkSqlServer();
+  //  services.AddEntityFrameworkSqlite();
+  //}
+
   public TDb CreateDbContext(string model, string nameOfConnectionString, ITestOutputHelper? output = null)
   {
-    var services = new ServiceCollection();
-    string connectionString = DbConfigurationBuilder<TDb>.GetConnectionString(nameOfConnectionString);
-    services.AddDbContext<TDb>(options =>
+    if (serviceProvider is null)
     {
-      if (model == "SQL")
-      {
-        options.UseSqlServer(connectionString);
-      }
-      if (model == "MEM")
-      {
-        options.UseInMemoryDatabase(connectionString, new InMemoryDatabaseRoot());
-      }
-      if (model == "MEME")
-      {
-        options.UseInMemoryDatabase(connectionString);
-      }
-      if (model == "LIT")
-      {
-        options.UseSqlite(connectionString);
-      }
-      options.EnableSensitiveDataLogging();
+      ConfigureServices(services);
 
-      if (output != null)
+      string connectionString = DbConfigurationBuilder<TDb>.GetConnectionString(nameOfConnectionString);
+      services.AddDbContext<TDb>((serviceProvider, options) =>
       {
-
-        var provider = new TestOutputLoggerProvider(output);
-        var loggerFactory = new LoggerFactory(new[]
+        options.UseInternalServiceProvider(serviceProvider);
+        if (model == "SQL")
         {
+          options.UseSqlServer(connectionString);
+        }
+        if (model == "MEM")
+        {
+          options.UseInMemoryDatabase(connectionString, new InMemoryDatabaseRoot());
+        }
+        if (model == "MEME")
+        {
+          options.UseInMemoryDatabase(connectionString);
+        }
+        if (model == "LIT")
+        {
+          options.UseSqlite(connectionString);
+        }
+        options.EnableSensitiveDataLogging();
+
+        if (output != null)
+        {
+
+          var provider = new TestOutputLoggerProvider(output);
+          var loggerFactory = new LoggerFactory(new[]
+          {
             provider
-        });
+          });
 
-        options.UseLoggerFactory(loggerFactory);
-      }
+          options.UseLoggerFactory(loggerFactory);
+        }
+      });
+      serviceProvider = services.BuildServiceProvider();
+    }
 
-    });
-    TDb? dbContext = services.BuildServiceProvider().GetRequiredService<TDb>();
+    TDb? dbContext = serviceProvider.GetRequiredService<TDb>();
     return dbContext;
   }
 

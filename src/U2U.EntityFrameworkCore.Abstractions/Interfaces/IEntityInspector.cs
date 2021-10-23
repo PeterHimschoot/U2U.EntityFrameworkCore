@@ -1,13 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-
-namespace U2U.EntityFrameworkCore.Abstractions.Interfaces;
+﻿namespace U2U.EntityFrameworkCore.Abstractions.Interfaces;
 
 public interface IEntityInspector
 {
-  Type TypeToInspect { get; }
-
-  bool Inspect(EntityEntry entry, DateTime timestamp);
+  void Inspect(InspectorContext context);
 }
+
+public interface IEntityInspector<T> : IEntityInspector { }
 
 public interface IEntityInspectors
 {

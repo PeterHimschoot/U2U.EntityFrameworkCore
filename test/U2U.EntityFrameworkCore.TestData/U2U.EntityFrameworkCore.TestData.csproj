@@ -20,6 +20,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\src\U2U.EntityFrameworkCore.Testing\U2U.EntityFrameworkCore.Testing.csproj" />
     <ProjectReference Include="..\..\src\U2U.EntityFrameworkCore\U2U.EntityFrameworkCore.csproj" />
   </ItemGroup>
 </Project>
