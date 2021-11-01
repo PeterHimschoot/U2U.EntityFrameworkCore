@@ -7,7 +7,7 @@
 /// <typeparam name="D">The DbContext to use.</typeparam>
 
 public class ReadonlyRepository<T, D> : IReadonlyRepository<T>
-  where T : class
+  where T : class, IAggregateRoot
   where D : DbContext
 {
   protected D DbContext { get; }

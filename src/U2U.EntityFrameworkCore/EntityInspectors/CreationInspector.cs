@@ -6,7 +6,8 @@ public class CreationInspector<T> : IEntityInspector<T>
 
   private readonly string propertyName;
 
-  public CreationInspector(string propertyName = "UtcCreated") => this.propertyName = propertyName;
+  public CreationInspector(string propertyName = "UtcCreated") 
+    => this.propertyName = propertyName;
 
   public void Inspect(InspectorContext context)
   {

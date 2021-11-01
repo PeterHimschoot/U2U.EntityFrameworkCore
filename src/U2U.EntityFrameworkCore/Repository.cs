@@ -6,7 +6,7 @@
 /// <typeparam name="T">The entity class' type.</typeparam>
 /// <typeparam name="D">The DbContext to use.</typeparam>
 public class Repository<T, D> : ReadonlyRepository<T, D>, IRepository<T>
-  where T : class//, IEntity
+  where T : class, IAggregateRoot
   where D : DbContext
 {
   public Repository(D dbContext) : base(dbContext) { }
@@ -39,8 +39,6 @@ public class Repository<T, D> : ReadonlyRepository<T, D>, IRepository<T>
     return (IEnumerable<IEntityInspector> )inspectors;
   }
 
-  [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "HAA0101:Array allocation for params parameter", Justification = "<Pending>")]
-  [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "HAA0401:Possible allocation of reference type enumerator", Justification = "<Pending>")]
   private async ValueTask DispatchEvents(EntityBase entity)
   {
     IServiceProvider services = (DbContext as IInfrastructure<IServiceProvider>).Instance;
@@ -63,9 +61,6 @@ public class Repository<T, D> : ReadonlyRepository<T, D>, IRepository<T>
 
   private void Inspect(InspectorContext context)
   {
-    //Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry? entry = context.Entry;
-    //IServiceProvider services = (DbContext as IInfrastructure<IServiceProvider>).Instance;
-    //Type serviceType = typeof(IEntityInspector<>).MakeGenericType(entry.Entity.GetType());
     IEnumerable<IEntityInspector> inspectors = GetEntityInspectors(context.Entry);
     foreach (IEntityInspector inspector in inspectors)
     {
@@ -73,7 +68,6 @@ public class Repository<T, D> : ReadonlyRepository<T, D>, IRepository<T>
     }
   }
 
-  [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "HAA0401:Possible allocation of reference type enumerator", Justification = "<Pending>")]
   public virtual async ValueTask SaveChangesAsync()
   {
     DateTime timestamp = DateTime.UtcNow;

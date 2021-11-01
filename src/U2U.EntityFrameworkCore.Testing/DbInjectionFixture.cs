@@ -18,13 +18,6 @@ public class DbInjectionFixture<TDb> where TDb : DbContext
   {
   }
 
-  //private void AddDefaultEntityFrameworkDatabases(IServiceCollection services)
-  //{
-  //  services.AddEntityFrameworkInMemoryDatabase();
-  //  services.AddEntityFrameworkSqlServer();
-  //  services.AddEntityFrameworkSqlite();
-  //}
-
   public TDb CreateDbContext(string model, string nameOfConnectionString, ITestOutputHelper? output = null)
   {
     if (serviceProvider is null)

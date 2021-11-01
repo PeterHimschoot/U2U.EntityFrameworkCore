@@ -6,6 +6,5 @@ public static class DependencyInjection
     where T : class
   => services.AddSingleton<IEntityInspector<T>>(new CreationInspector<T>(creationPropertyName))
              .AddSingleton<IEntityInspector<T>>(new ModifiedInspector<T>(modifiedPropertyName));
-
 }
 

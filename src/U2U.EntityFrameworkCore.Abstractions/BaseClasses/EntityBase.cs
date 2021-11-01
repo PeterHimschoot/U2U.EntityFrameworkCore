@@ -1,4 +1,5 @@
 ﻿namespace U2U.EntityFrameworkCore.Abstractions;
+
 /// <summary>
 /// EntityBase serves as the base class for all entities.
 /// However, this is not required for all entities.

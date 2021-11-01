@@ -64,28 +64,28 @@ internal class ExpressionComparison : ExpressionVisitor
     return base.Visit(expression);
   }
 
-  protected override Expression? VisitConstant(ConstantExpression constant)
+  protected override Expression VisitConstant(ConstantExpression constant)
   {
     ConstantExpression? candidate = MakeCandidateMatch(constant);
     CheckEqual(constant.Value, candidate?.Value);
     return base.VisitConstant(constant);
   }
 
-  protected override Expression? VisitMember(MemberExpression member)
+  protected override Expression VisitMember(MemberExpression member)
   {
     MemberExpression? candidate = MakeCandidateMatch(member);
     CheckEqual(member.Member, candidate?.Member);
     return base.VisitMember(member);
   }
 
-  protected override Expression? VisitMethodCall(MethodCallExpression methodCall)
+  protected override Expression VisitMethodCall(MethodCallExpression methodCall)
   {
     MethodCallExpression? candidate = MakeCandidateMatch(methodCall);
     CheckEqual(methodCall.Method, candidate?.Method);
     return base.VisitMethodCall(methodCall);
   }
 
-  protected override Expression? VisitParameter(ParameterExpression parameter)
+  protected override Expression VisitParameter(ParameterExpression parameter)
   {
     ParameterExpression? candidate = MakeCandidateMatch(parameter);
     CheckEqual(parameter.Name, candidate?.Name);
@@ -125,28 +125,32 @@ internal class ExpressionComparison : ExpressionVisitor
     return base.VisitNew(nex);
   }
 
-  private void CompareList<T>(ReadOnlyCollection<T> collection, ReadOnlyCollection<T> candidates)
+  private void CompareList<T>(ReadOnlyCollection<T>? collection, ReadOnlyCollection<T>? candidates)
     => CompareList(collection, candidates, (item, candidate) => EqualityComparer<T>.Default.Equals(item, candidate));
 
-  private void CompareList<T>(ReadOnlyCollection<T> collection, ReadOnlyCollection<T> candidates, Func<T, T, bool> comparer)
+  private void CompareList<T>(ReadOnlyCollection<T>? collection, ReadOnlyCollection<T>? candidates, Func<T, T, bool> comparer)
   {
     if (!CheckAreOfSameSize(collection, candidates))
     {
       return;
     }
 
-    for (int i = 0; i < collection.Count; i++)
+    if (collection is not null && candidates is not null)
     {
-      if (!comparer(collection[i], candidates[i]))
+      for (int i = 0; i < collection.Count; i++)
       {
-        Stop();
-        return;
+        if (!comparer(collection[i], candidates[i]))
+        {
+          Stop();
+          return;
+        }
       }
     }
+    // ???
   }
 
-  private bool CheckAreOfSameSize<T>(ReadOnlyCollection<T> collection, ReadOnlyCollection<T> candidate)
-    => CheckEqual(collection.Count, candidate.Count);
+  private bool CheckAreOfSameSize<T>(ReadOnlyCollection<T>? collection, ReadOnlyCollection<T>? candidate)
+    => CheckEqual(collection?.Count, candidate?.Count);
 
   private bool CheckNotNull<T>(T? t) where T : class
   {
@@ -159,7 +163,7 @@ internal class ExpressionComparison : ExpressionVisitor
     return true;
   }
 
-  private bool CheckEqual<T>(T t, T candidate)
+  private bool CheckEqual<T>(T? t, T? candidate)
   {
     if (!EqualityComparer<T>.Default.Equals(t, candidate))
     {

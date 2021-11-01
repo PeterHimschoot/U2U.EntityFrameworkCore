@@ -20,7 +20,7 @@ public static class SpecificationExtensions
     Expression<Func<T, bool>> leftExpression = left.Criteria;
 
     var visitor = new SwapVisitor(leftExpression.Parameters[0], rightExpression.Parameters[0]);
-    BinaryExpression lazyAnd = Expression.AndAlso(visitor.Visit(leftExpression.Body), rightExpression.Body);
+    BinaryExpression lazyAnd = Expression.AndAlso(visitor.Visit(leftExpression.Body)!, rightExpression.Body);
     var and = Expression.Lambda<Func<T, bool>>(lazyAnd, rightExpression.Parameters);
     return new Specification<T>(and);
   }
@@ -35,7 +35,7 @@ public static class SpecificationExtensions
   {
     Expression<Func<T, bool>> leftExpression = left.Criteria;
     var visitor = new SwapVisitor(leftExpression.Parameters[0], rightExpression.Parameters[0]);
-    BinaryExpression lazyOr = Expression.OrElse(visitor.Visit(leftExpression.Body), rightExpression.Body);
+    BinaryExpression lazyOr = Expression.OrElse(visitor.Visit(leftExpression.Body)!, rightExpression.Body);
     var or = Expression.Lambda<Func<T, bool>>(lazyOr, rightExpression.Parameters);
     return new Specification<T>(or);
   }
@@ -59,7 +59,7 @@ public static class SpecificationExtensions
       this.to = to;
     }
 
-    public override Expression Visit(Expression node)
+    public override Expression? Visit(Expression? node)
       => node == this.from ? this.to : base.Visit(node);
   }
 }

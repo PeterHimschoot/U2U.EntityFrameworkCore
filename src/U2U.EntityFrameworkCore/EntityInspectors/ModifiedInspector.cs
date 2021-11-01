@@ -6,7 +6,8 @@ public class ModifiedInspector<T> : IEntityInspector<T>
 
   private readonly string propertyName;
 
-  public ModifiedInspector(string propertyName = UtcModified) => this.propertyName = propertyName;
+  public ModifiedInspector(string propertyName = UtcModified) 
+    => this.propertyName = propertyName;
 
   public void Inspect(InspectorContext context)
   {

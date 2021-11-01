@@ -27,7 +27,7 @@ public class CachedSpecification<T, K>
 
   public TimeSpan CacheDuration { get; set; }
 
-  public bool Equals(CachedSpecification<T, K> other)
+  public bool Equals(CachedSpecification<T, K>? other)
   {
     if (object.ReferenceEquals(this, other))
     {
