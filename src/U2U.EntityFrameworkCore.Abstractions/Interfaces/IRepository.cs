@@ -6,7 +6,7 @@
 /// </summary>
 /// <typeparam name="T">The entity class' type.</typeparam>
 public interface IRepository<T> : IReadonlyRepository<T>
-  where T : class
+  where T : class, IAggregateRoot
 {
   /// <summary>
   /// Insert a new instance, asynchronously

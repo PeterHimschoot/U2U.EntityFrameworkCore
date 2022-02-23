@@ -1,6 +1,6 @@
 ﻿namespace U2U.EntityFrameworkCore.Testing;
 
-public class FakeRepositoryFactory<T> where T : class
+public class FakeRepositoryFactory<T> where T : class, IAggregateRoot
 {
   public IRepository<T> FakeRepoWithData(IQueryable<T> data, Action<Mock<IRepository<T>>>? setup = null)
   {

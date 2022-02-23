@@ -6,7 +6,7 @@
 /// You can also choose between a list of entities, or a single instance.
 /// </summary>
 /// <typeparam name="T">The entity class' type.</typeparam>
-public interface IReadonlyRepository<T> where T : class
+public interface IReadonlyRepository<T> where T : class, IAggregateRoot
 {
   /// <summary>
   /// Retrieve the list of all entities by specification, asynchronously.
