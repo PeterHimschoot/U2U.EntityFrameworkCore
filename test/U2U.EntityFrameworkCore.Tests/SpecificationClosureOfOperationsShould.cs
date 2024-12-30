@@ -1,118 +1,119 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace U2U.EntityFrameworkCore.Tests;
 
 public class SpecificationClosureOfOperationsShould
-  : IClassFixture<DbInjectionFixture<TrainingDb>>
-  , IClassFixture<SpecificationFactories>
+  : IClassFixture<SpecificationFactories>
 {
-  private readonly DbInjectionFixture<TrainingDb> testFixture;
   private readonly SpecificationFactories specificationFactories;
 
-  public SpecificationClosureOfOperationsShould(DbInjectionFixture<TrainingDb> testFixture,
-    SpecificationFactories specificationFactories)
-  {
-    this.testFixture = testFixture;
-    this.specificationFactories = specificationFactories;
-  }
+  public SpecificationClosureOfOperationsShould(SpecificationFactories specificationFactories) 
+  => this.specificationFactories = specificationFactories;
+
+  private DbInjectionFixture<TrainingDb> InMemFixture()
+  => new DbInjectionFixture<TrainingDb>()
+  .ConfigureServices(services => services
+  .AddEntityFrameworkInMemoryDatabase()
+  //.AddMaintenanceInspectors<Game>()
+  );
 
   [Fact]
-  public async ValueTask WorkWithAndSpecification()
+  public async Task WorkWithAndSpecification()
   {
     const string dbName = "FakeDatabase";
 
-    using (TrainingDb dbContext = this.testFixture.CreateInMemoryDbContext(dbName))
-    {
-      dbContext.Database.EnsureCreated();
-      IReadonlyRepository<Login> repo = new Repository<Login, TrainingDb>(dbContext);
+    using TrainingDb dbContext = InMemFixture().CreateInMemoryDbContext(dbName);
+    _ = dbContext.Database.EnsureCreated();
+    IReadonlyRepository<Login> repo = new Repository<Login, TrainingDb>(dbContext);
 
-      ISpecification<Login> left = this.specificationFactories.For<Login>().Where(l => l.Id >= 1);
-      ISpecification<Login> right = this.specificationFactories.For<Login>().Where(l2 => l2.Id <= 2);
-      ISpecification<Login> spec = left.Include(l => l.Student).And(right);
+    ISpecification<Login> left = specificationFactories.For<Login>().Where(l => l.Id >= 1);
+    ISpecification<Login> right = specificationFactories.For<Login>().Where(l2 => l2.Id <= 2);
+    ISpecification<Login> spec = left.Include(l => l.Student).And(right);
 
-      System.Collections.Generic.IEnumerable<Login> logins = await repo.ListAsync(spec);
-      logins.Should().HaveCount(2);
-      logins.Select(l => l.Student).Should().NotBeNull();
-    }
+    System.Collections.Generic.IEnumerable<Login> logins = await repo.ListAsync(spec);
+    _ = logins.Should().HaveCount(2);
+    _ = logins.Select(l => l.Student).Should().NotBeNull();
   }
 
   [Fact]
-  public async ValueTask WorkWithAndExpression()
+  public async Task WorkWithAndExpression()
   {
     const string dbName = "FakeDatabase";
 
-    using TrainingDb dbContext = this.testFixture.CreateInMemoryDbContext(dbName);
-    dbContext.Database.EnsureCreated();
+    using TrainingDb dbContext = InMemFixture().CreateInMemoryDbContext(dbName);
+    _ = dbContext.Database.EnsureCreated();
     IReadonlyRepository<Login> repo = new Repository<Login, TrainingDb>(dbContext);
 
     ISpecification<Login> spec =
-      this.specificationFactories.For<Login>().Where(l => l.Id >= 1)
+      specificationFactories.For<Login>().Where(l => l.Id >= 1)
                                          .And(l2 => l2.Id <= 2)
                                          .Include(l => l.Student);
 
     System.Collections.Generic.IEnumerable<Login> logins = await repo.ListAsync(spec);
-    logins.Should().HaveCount(2);
-    logins.Select(l => l.Student).Should().NotBeNull();
+    _ = logins.Should().HaveCount(2);
+    _ = logins.Select(l => l.Student).Should().NotBeNull();
   }
 
   [Fact]
-  public async ValueTask WorkWithOrSpecification()
+  public async Task WorkWithOrSpecification()
   {
     const string dbName = "FakeDatabase";
 
-    using TrainingDb dbContext = this.testFixture.CreateInMemoryDbContext(dbName);
-    dbContext.Database.EnsureCreated();
+    using TrainingDb dbContext = InMemFixture().CreateInMemoryDbContext(dbName);
+    _ = dbContext.Database.EnsureCreated();
     IReadonlyRepository<Login> repo = new Repository<Login, TrainingDb>(dbContext);
 
     ISpecification<Login> right =
-      this.specificationFactories.For<Login>().Where(l2 => l2.Id == 2);
+      specificationFactories.For<Login>().Where(l2 => l2.Id == 2);
 
-    ISpecification<Login> spec = this.specificationFactories.For<Login>()
+    ISpecification<Login> spec = specificationFactories.For<Login>()
       .Where(l => l.Id == 1)
       .Or(right)
       .Include(l => l.Student);
 
     System.Collections.Generic.IEnumerable<Login> logins = await repo.ListAsync(spec);
-    logins.Should().HaveCount(2);
-    logins.Select(l => l.Student).Should().NotBeNull();
+    _ = logins.Should().HaveCount(2);
+    _ = logins.Select(l => l.Student).Should().NotBeNull();
   }
 
   [Fact]
-  public async ValueTask WorkWithOrExpression()
+  public async Task WorkWithOrExpression()
   {
     const string dbName = "FakeDatabase";
 
-    using TrainingDb dbContext = this.testFixture.CreateInMemoryDbContext(dbName);
-    dbContext.Database.EnsureCreated();
+    using TrainingDb dbContext = InMemFixture().CreateInMemoryDbContext(dbName);
+    _ = dbContext.Database.EnsureCreated();
     IReadonlyRepository<Login> repo = new Repository<Login, TrainingDb>(dbContext);
 
     ISpecification<Login> spec =
-      this.specificationFactories.For<Login>()
+      specificationFactories.For<Login>()
       .Where(l => l.Id == 1)
       .Include(l => l.Student)
       .Or(l => l.Id == 2);
 
     System.Collections.Generic.IEnumerable<Login> logins = await repo.ListAsync(spec);
-    logins.Should().HaveCount(2);
-    logins.Select(l => l.Student).Should().NotBeNull();
+    _ = logins.Should().HaveCount(2);
+    _ = logins.Select(l => l.Student).Should().NotBeNull();
   }
 
   [Fact]
-  public async ValueTask WorkWithNotSpecification()
+  public async Task WorkWithNotSpecification()
   {
     const string dbName = "FakeDatabase";
 
-    using TrainingDb dbContext = this.testFixture.CreateInMemoryDbContext(dbName);
-    dbContext.Database.EnsureCreated();
+    using TrainingDb dbContext = InMemFixture().CreateInMemoryDbContext(dbName);
+    _ = dbContext.Database.EnsureCreated();
     IReadonlyRepository<Login> repo = new Repository<Login, TrainingDb>(dbContext);
 
     ISpecification<Login> spec =
-      this.specificationFactories.For<Login>()
+      specificationFactories.For<Login>()
       .Where(l => l.Id == 1)
       .Include(l => l.Student)
       .Not();
 
     System.Collections.Generic.IEnumerable<Login> logins = await repo.ListAsync(spec);
-    logins.Should().HaveCount(2);
-    logins.Select(l => l.Student).Should().NotBeNull();
+    _ = logins.Should().HaveCount(2);
+    _ = logins.Select(l => l.Student).Should().NotBeNull();
   }
 }
 
