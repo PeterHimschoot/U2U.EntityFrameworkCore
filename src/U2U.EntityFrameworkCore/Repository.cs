@@ -29,8 +29,6 @@ public class Repository<T, D> : ReadonlyRepository<T, D>, IRepository<T>
     return new ValueTask();
   }
 
-  private IEnumerable<IEntityInspector>? inspectors;
-
   private IEnumerable<IEntityInspector> GetEntityInspectors(EntityEntry entry)
   {
     IServiceProvider services = (DbContext as IInfrastructure<IServiceProvider>).Instance;

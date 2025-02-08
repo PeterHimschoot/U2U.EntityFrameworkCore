@@ -21,7 +21,7 @@ public class CachedRepository<T, D> : IReadonlyRepository<T>
 
   public async ValueTask<IEnumerable<T>> ListAsync(ISpecification<T> specification)
     => await this.cache.GetOrCreateAsync<IEnumerable<T>>(specification,
-      async (spec) => await this.innerRepo.ListAsync(specification));
+      async spec => await innerRepo.ListAsync(specification)) ?? [];
 
   public async ValueTask<T?> SingleAsync(ISpecification<T> specification)
     => await this.cache.GetOrCreateAsync<T?>(specification,
