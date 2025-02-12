@@ -1,4 +1,6 @@
-﻿namespace U2U.EntityFrameworkCore;
+﻿using System.Runtime.CompilerServices;
+
+namespace U2U.EntityFrameworkCore;
 
 /// <summary>
 /// Implementation for ISpecification<typeparamref name="T"/>
@@ -25,6 +27,14 @@ public class Specification<T> : ISpecification<T>, IEquatable<Specification<T>>
 
   private Func<T, bool>? compiledCriteria = null;
 
+  private bool _noTracking = false;
+
+  public ISpecification<T> AsNoTracking()
+  {
+    this._noTracking = true;
+    return this;
+  }
+
   public bool Test(in T t)
   {
     this.compiledCriteria ??= Criteria.Compile();
@@ -50,8 +60,15 @@ public class Specification<T> : ISpecification<T>, IEquatable<Specification<T>>
   }
 
   public IQueryable<T> BuildQueryable(IQueryable<T> q)
-  => Includes.Aggregate(seed: q, func: (current, include) => current.Include(include))
+  {
+    IQueryable<T> iq = Includes.Aggregate(seed: q, func: (current, include) => current.Include(include))
     .Where(Criteria);
+    if( _noTracking )
+    {
+      iq = iq.AsNoTracking();
+    }
+    return iq;
+  }
 
   public virtual bool Equals([AllowNull] Specification<T> other)
   {

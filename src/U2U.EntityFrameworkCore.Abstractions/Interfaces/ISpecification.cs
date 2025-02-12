@@ -46,4 +46,6 @@ public interface ISpecification<T>
   /// <param name="q">The IQueryable<typeparamref name="T"/> to query.</param>
   /// <returns>The IQueryable<typeparamref name="T"/>A new IQueryable with Where(spec) added.</returns>
   IQueryable<T> BuildQueryable(IQueryable<T> q);
+
+  ISpecification<T> AsNoTracking();
 }
